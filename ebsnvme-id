@@ -38,18 +38,11 @@ ensure_ebs_volume() {
 # Prints the block device mapping name for the device specified in $1
 print_block_device_mapping() {
   local device=$1
-  local bdev
+  local block_device_name
 
-  ensure_ebs_volume "$device"
+  block_device_name=$(read_block_device_name "$device")
 
-  bdev=$(read_nvme_attr "$device" bdev)
-
-  if [[ -z $bdev ]]; then
-    echo "[ERROR] /dev/$device has no block device mapping available" >&2
-    exit 1
-  fi
-
-  echo "${bdev}"
+  echo "${block_device_name}"
 }
 
 ##
@@ -59,9 +52,7 @@ print_udev_env() {
   local bdev
   local volid
 
-  ensure_ebs_volume "$device"
-
-  bdev=$(read_nvme_attr "$device" bdev)
+  bdev=$(read_block_device_name "$device")
   volid=$(read_volume_id "$device")
 
   if [[ -z $bdev || -z $volid ]]; then
@@ -82,6 +73,25 @@ print_volume_id() {
   vol_id=$(read_volume_id "$device")
 
   echo "Volume ID: ${vol_id}"
+}
+
+##
+# Reads the block device name from the device specified in $1 and strips off
+# any leading /dev/ that might be present
+read_block_device_name() {
+  local device=$1
+  local bdev
+
+  ensure_ebs_volume "$device"
+
+  bdev=$(read_nvme_attr "$device" bdev)
+
+  if [[ -z $bdev ]]; then
+    echo "[ERROR] /dev/$device has no block device mapping available" >&2
+    exit 1
+  fi
+
+  printf "%s" "${bdev#/dev/}"
 }
 
 ##
