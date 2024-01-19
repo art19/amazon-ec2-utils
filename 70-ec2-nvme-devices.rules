@@ -13,9 +13,15 @@ KERNEL=="nvme[0-9]*n[0-9]*", ENV{DEVTYPE}=="disk", ATTRS{serial}=="?*", ATTRS{mo
 KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{serial}=="?*", ATTRS{model}=="?*",  IMPORT{program}="/usr/sbin/ec2nvme-nsid %k"
 KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{serial}=="?*", ATTRS{model}=="?*",  ENV{_NS_ID}=="?*", SYMLINK+="disk/by-id/nvme-$attr{model}_$attr{serial}-ns-$env{_NS_ID}-part%n", OPTIONS+="string_escape=replace"
 
-# ebs nvme devices
-KERNEL=="nvme[0-9]*n[0-9]*",        ENV{DEVTYPE}=="disk",      ATTRS{model}=="Amazon Elastic Block Store", PROGRAM="/usr/sbin/ebsnvme-id -u /dev/%k", SYMLINK+="%c"
-KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{model}=="Amazon Elastic Block Store", PROGRAM="/usr/sbin/ebsnvme-id -u /dev/%k", SYMLINK+="%c%n"
+# Import variables for EBS volumes
+KERNEL=="nvme[0-9]*n[0-9]*",        ENV{DEVTYPE}=="disk",      ATTRS{model}=="Amazon Elastic Block Store", IMPORT{program}+="/usr/sbin/ebsnvme-id -U %k"
+KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{model}=="Amazon Elastic Block Store", IMPORT{program}+="/usr/sbin/ebsnvme-id -U %k"
+
+# Assign symlinks
+KERNEL=="nvme[0-9]*n[0-9]*",        ENV{DEVTYPE}=="disk",      ATTRS{model}=="Amazon Elastic Block Store", ENV{_EC2_BLOCK_DEVICE_MAPPING}=="?*", SYMLINK+="$env{_EC2_BLOCK_DEVICE_MAPPING}"
+KERNEL=="nvme[0-9]*n[0-9]*",        ENV{DEVTYPE}=="disk",      ATTRS{model}=="Amazon Elastic Block Store", ENV{_EBS_VOLUME_ID}=="?*",            SYMLINK+="disk/by-id/ebs-$env{_EBS_VOLUME_ID}"
+KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{model}=="Amazon Elastic Block Store", ENV{_EC2_BLOCK_DEVICE_MAPPING}=="?*", SYMLINK+="$env{_EC2_BLOCK_DEVICE_MAPPING}$env{ID_PART_ENTRY_NUMBER}"
+KERNEL=="nvme[0-9]*n[0-9]*p[0-9]*", ENV{DEVTYPE}=="partition", ATTRS{model}=="Amazon Elastic Block Store", ENV{_EBS_VOLUME_ID}=="?*",            SYMLINK+="disk/by-id/ebs-$env{_EBS_VOLUME_ID}-part$env{ID_PART_ENTRY_NUMBER}"
 
 # Do not timeout I/O operations on EBS volumes.
 KERNEL=="nvme[0-9]*n[0-9]*", ENV{DEVTYPE}=="disk", ATTRS{model}=="Amazon Elastic Block Store", ATTR{queue/io_timeout}="4294967295"
