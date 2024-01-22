@@ -5,32 +5,35 @@
  \" of this license, visit
  \" http://creativecommons.org/licenses/by-sa/4.0/.
  \" SPDX-License-Identifier: CC-BY-SA-4.0
-.TH EBSNVME-ID 8 "May  4 2020"
+.TH EBSNVME-ID 8 "Jan 19 2024"
 .SH NAME
 ebsnvme-id \- Reads and prints EBS information from NVMe devices
 .SH SYNOPSIS
 .B ebsnvme-id
-.RI [ options ] " DEVICE"
+.RI [ options ]
 .br
 .SH DESCRIPTION
 .B ebsnvme-id
-uses the NVME Management Interface to read various metadata about
-NVME-attached EBS storage volumes.  It can be used to retrive the EBS
+uses the NVMe Management Interface to read various metadata about
+NVMe-attached EBS storage volumes.  It can be used to retrive the EBS
 Volume ID or EC2 API device mapping value given the local block device
 name.
 
 .SH OPTIONS
 .TP
-.B \-v, \-\-volume
+.B \-v <device>
 Return volume-id
 .TP
-.B \-b, \-\-block-dev
-Return block device mapping
+.B \-b <device>, \-u <device>
+Return block device mapping (\-u is a deprecated alias)
 .TP
-.B \-u, \-\-udev
-Output data in format suitable for udev rules                                                                            
+.B \-U <device>
+Output data for the device as udev environment environment variables
+suitable for use with
+.B IMPORT{program}
+in a udev rule
 .TP
-.B \-h, \-\-help
+.B \-h
 Show summary of options.
 .SH SEE ALSO
 .BR nvme (1),
