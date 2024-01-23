@@ -31,8 +31,10 @@ gzip -f -9 doc/*.8
 %{__install} -d -pm 755 %{buildroot}%{_bindir}
 %{__install} -d -pm 755 %{buildroot}%{_mandir}/man8
 %{__install} -d -pm 755 %{buildroot}%{_sbindir}
+%{__install} -d -pm 755 %{buildroot}%{_sysconfdir}/dracut.conf.d
 %{__install} -d -pm 755 %{buildroot}%{_sysconfdir}/udev/rules.d
 %{__install} -d -pm 755 %{buildroot}%{_udevrulesdir}
+%{__install} -d -pm 755 %{buildroot}%{dracutlibdir}/modules.d/96ec2-utils
 
 # Scripts
 %{__install} -pm 755 ebsnvme-id %{buildroot}%{_sbindir}/ebsnvme-id
@@ -55,6 +57,10 @@ gzip -f -9 doc/*.8
 # file:
 %{__install} -pm 644 60-cdrom_id.rules %{buildroot}%{_sysconfdir}/udev/rules.d/60-cdrom_id.rules
 
+# Dracut module
+%{__install} -pm 644 dracut/dracut.conf %{buildroot}%{_sysconfdir}/dracut.conf.d/ec2-utils.conf
+%{__install} -pm 755 dracut/module-setup.sh %{buildroot}%{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
+
 %files
 %license LICENSE
 %doc README.md
@@ -69,6 +75,22 @@ gzip -f -9 doc/*.8
 %{_udevrulesdir}/53-ec2-read-ahead-kb.rules
 %{_udevrulesdir}/70-ec2-nvme-devices.rules
 %{_sysconfdir}/udev/rules.d/60-cdrom_id.rules
+
+%package dracut
+Summary:   Dracut module providing early boot support for EC2 devices
+Requires:  amazon-ec2-utils = %{version}-%{release}
+Requires:  dracut
+
+%description dracut
+This subpackage contains the Dracut module that provides early boot support for EC2
+devices, like making EBS NVMe devices have names in /dev that match their EC2 block
+device mapping names.
+
+%files dracut
+%license LICENSE
+%doc README.md
+%{_sysconfdir}/dracut.conf.d/ec2-utils.conf
+%{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
