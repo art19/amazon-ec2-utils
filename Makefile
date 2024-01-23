@@ -1,3 +1,9 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the MIT License. See the LICENSE accompanying this file
+# for the specific language governing permissions and limitations under
+# the License.
+
 RPM_BUILD_DIR := $(shell mktemp -d /tmp/amazon-linux-utils.rpm-XXXXXXXX)
 
 .PHONY: rpm
