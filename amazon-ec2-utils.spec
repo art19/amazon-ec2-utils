@@ -14,7 +14,7 @@ Obsoletes: ec2-metadata <= 0.1
 Requires:  curl
 Requires:  nvme-cli >= 1.13
 BuildRequires: gzip systemd-rpm-macros
-BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRoot: %{_tmppath}/%{name}-root
 
 %description
 amazon-ec2-utils contains a set of utilities for running in EC2.
@@ -40,6 +40,10 @@ gzip -f -9 doc/*.8
 %{__install} -pm 755 ec2nvme-nsid %{buildroot}%{_sbindir}/ec2nvme-nsid
 %{__install} -pm 755 ec2udev-vbd %{buildroot}%{_sbindir}/ec2udev-vbd
 
+# man pages
+%{__install} -pm 644 doc/ebsnvme-id.8.gz %{buildroot}%{_mandir}/man8/ebsnvme-id.8.gz
+%{__install} -pm 644 doc/ec2-metadata.8.gz %{buildroot}%{_mandir}/man8/ec2-metadata.8.gz
+
 # udev rules
 %{__install} -pm 644 51-ec2-hvm-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-hvm-devices.rules
 %{__install} -pm 644 51-ec2-xen-vbd-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-xen-vbd-devices.rules
@@ -55,6 +59,8 @@ gzip -f -9 doc/*.8
 %license LICENSE
 %doc README.md
 %{_bindir}/ec2-metadata
+%{_mandir}/man8/ebsnvme-id.8.gz
+%{_mandir}/man8/ec2-metadata.8.gz
 %{_sbindir}/ec2nvme-nsid
 %{_sbindir}/ebsnvme-id
 %{_sbindir}/ec2udev-vbd
