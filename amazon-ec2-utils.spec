@@ -1,3 +1,5 @@
+%define dracutlibdir %{_prefix}/lib/dracut
+
 Name:      amazon-ec2-utils
 Summary:   A set of tools for running in EC2
 Version:   2.2.0
