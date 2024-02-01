@@ -100,6 +100,7 @@ device mapping names.
 - Change ec2nvme-nsid to use Bash string manipulation to improve
   performance and reliability
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
+- Add Dracut module to support block device naming in early boot
 
 * Mon Jun  5 2023 Guillaume Delacour <delacoug@amazon.com> - 2.2.0-1
 - Add `--quiet` option to `ec2-metadata --help` output
