@@ -26,10 +26,10 @@ ensure_ebs_volume() {
     exit 1
   fi
 
-  mn="$(read_nvme_attr "$device" mn || printf "<unknown>")"
+  mn="$(read_nvme_attr "$device" mn)"
 
-  if [[ $mn != "${EBS_MN}" ]]; then
-    echo "[ERROR] /dev/$device is not an EBS device, but is $mn" >&2
+  if [[ "$mn" != "${EBS_MN}" ]]; then
+    echo "[ERROR] /dev/$device is not an EBS device, but is ${mn:-<unknown>}" >&2
     exit 1
   fi
 }
