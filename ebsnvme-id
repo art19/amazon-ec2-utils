@@ -55,7 +55,7 @@ print_udev_env() {
   bdev=$(read_block_device_name "$device")
   volid=$(read_volume_id "$device")
 
-  if [[ -z $bdev || -z $volid ]]; then
+  if [[ -z $bdev ]] || [[ -z $volid ]]; then
     echo "[ERROR] /dev/$device cannot determine udev environment" >&2
     exit 1
   fi
