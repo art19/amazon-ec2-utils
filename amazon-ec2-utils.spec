@@ -1,20 +1,12 @@
+%define dracutlibdir %{_prefix}/lib/dracut
+
 Name:      amazon-ec2-utils
 Summary:   A set of tools for running in EC2
 Version:   2.2.0
 Release:   1%{?dist}
 License:   MIT
 Group:     System Tools
-
-Source0:   ec2-metadata
-Source1:   ec2udev-vbd
-Source2:   51-ec2-hvm-devices.rules
-Source16:  60-cdrom_id.rules
-Source22:  70-ec2-nvme-devices.rules
-Source23:  ec2nvme-nsid
-Source24:  ebsnvme-id
-Source25:  51-ec2-xen-vbd-devices.rules
-Source26:  53-ec2-read-ahead-kb.rules
-
+Source:    amazon-ec2-utils.tar.gz
 URL:       https://github.com/aws/amazon-ec2-utils
 BuildArch: noarch
 Provides:  ec2-utils = %{version}-%{release}
@@ -22,63 +14,93 @@ Obsoletes: ec2-utils < 2.1
 Provides:  ec2-metadata = %{version}-%{release}
 Obsoletes: ec2-metadata <= 0.1
 Requires:  curl
-Requires:  python3
-BuildRequires: python3-devel
-BuildRequires: systemd-rpm-macros
-BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  nvme-cli >= 1.13
+BuildRequires: gzip systemd-rpm-macros
+BuildRoot: %{_tmppath}/%{name}-root
 
 %description
-amazon-ec2-utils contains a set of utilities for running in ec2.
+amazon-ec2-utils contains a set of utilities for running in EC2.
 
 %prep
+%autosetup -c
 
 %build
+# compress manpages
+gzip -f -9 doc/*.8
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_bindir}
-mkdir -p $RPM_BUILD_ROOT%{_udevrulesdir}
-mkdir -p $RPM_BUILD_ROOT/%{_sbindir}
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/udev/rules.d/
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
+# Directories
+%{__install} -d -pm 755 %{buildroot}%{_bindir}
+%{__install} -d -pm 755 %{buildroot}%{_mandir}/man8
+%{__install} -d -pm 755 %{buildroot}%{_sbindir}
+%{__install} -d -pm 755 %{buildroot}%{_sysconfdir}/dracut.conf.d
+%{__install} -d -pm 755 %{buildroot}%{_sysconfdir}/udev/rules.d
+%{__install} -d -pm 755 %{buildroot}%{_udevrulesdir}
+%{__install} -d -pm 755 %{buildroot}%{dracutlibdir}/modules.d/96ec2-utils
 
-install -m755 %{SOURCE0} $RPM_BUILD_ROOT%{_bindir}
-install -m755 %{SOURCE1} $RPM_BUILD_ROOT/%{_sbindir}
-install -m644 %{SOURCE2} $RPM_BUILD_ROOT%{_udevrulesdir}
-install -m644 %{SOURCE25} $RPM_BUILD_ROOT%{_udevrulesdir}
-install -m644 %{SOURCE26} $RPM_BUILD_ROOT%{_udevrulesdir}
+# Scripts
+%{__install} -pm 755 ebsnvme-id %{buildroot}%{_sbindir}/ebsnvme-id
+%{__install} -pm 755 ec2-metadata %{buildroot}%{_bindir}/ec2-metadata
+%{__install} -pm 755 ec2nvme-nsid %{buildroot}%{_sbindir}/ec2nvme-nsid
+%{__install} -pm 755 ec2udev-vbd %{buildroot}%{_sbindir}/ec2udev-vbd
+
+# man pages
+%{__install} -pm 644 doc/ebsnvme-id.8.gz %{buildroot}%{_mandir}/man8/ebsnvme-id.8.gz
+%{__install} -pm 644 doc/ec2-metadata.8.gz %{buildroot}%{_mandir}/man8/ec2-metadata.8.gz
+
+# udev rules
+%{__install} -pm 644 51-ec2-hvm-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-hvm-devices.rules
+%{__install} -pm 644 51-ec2-xen-vbd-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-xen-vbd-devices.rules
+%{__install} -pm 644 53-ec2-read-ahead-kb.rules %{buildroot}%{_udevrulesdir}/53-ec2-read-ahead-kb.rules
+%{__install} -pm 644 70-ec2-nvme-devices.rules %{buildroot}%{_udevrulesdir}/70-ec2-nvme-devices.rules
+
 # Install 60-cdrom_id.rules to /etc rather than %{_udevrulesdir}
 # because it is intended as an override of a systemd-provided rules
 # file:
-install -m644 %{SOURCE16} $RPM_BUILD_ROOT%{_sysconfdir}/udev/rules.d/
+%{__install} -pm 644 60-cdrom_id.rules %{buildroot}%{_sysconfdir}/udev/rules.d/60-cdrom_id.rules
 
-#udev rules for nvme block devices and supporting scripts
-install -m644 %{SOURCE22} $RPM_BUILD_ROOT%{_udevrulesdir}
-install -m755 %{SOURCE23} $RPM_BUILD_ROOT%{_sbindir}/ec2nvme-nsid
-install -m755 %{SOURCE24} $RPM_BUILD_ROOT/%{_sbindir}
-
-%check
-%{python3} -m py_compile %{SOURCE24}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+# Dracut module
+%{__install} -pm 644 dracut/dracut.conf %{buildroot}%{_sysconfdir}/dracut.conf.d/ec2-utils.conf
+%{__install} -pm 755 dracut/module-setup.sh %{buildroot}%{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %files
+%license LICENSE
+%doc README.md
 %{_bindir}/ec2-metadata
+%{_mandir}/man8/ebsnvme-id.8.gz
+%{_mandir}/man8/ec2-metadata.8.gz
 %{_sbindir}/ec2nvme-nsid
 %{_sbindir}/ebsnvme-id
 %{_sbindir}/ec2udev-vbd
-/usr/lib/udev/rules.d/51-ec2-hvm-devices.rules
-/usr/lib/udev/rules.d/51-ec2-xen-vbd-devices.rules
-/usr/lib/udev/rules.d/53-ec2-read-ahead-kb.rules
-/usr/lib/udev/rules.d/70-ec2-nvme-devices.rules
-/etc/udev/rules.d/60-cdrom_id.rules
+%{_udevrulesdir}/51-ec2-hvm-devices.rules
+%{_udevrulesdir}/51-ec2-xen-vbd-devices.rules
+%{_udevrulesdir}/53-ec2-read-ahead-kb.rules
+%{_udevrulesdir}/70-ec2-nvme-devices.rules
+%{_sysconfdir}/udev/rules.d/60-cdrom_id.rules
+
+%package dracut
+Summary:   Dracut module providing early boot support for EC2 devices
+Requires:  amazon-ec2-utils = %{version}-%{release}
+Requires:  dracut
+
+%description dracut
+This subpackage contains the Dracut module that provides early boot support for EC2
+devices, like making EBS NVMe devices have names in /dev that match their EC2 block
+device mapping names.
+
+%files dracut
+%license LICENSE
+%doc README.md
+%{_sysconfdir}/dracut.conf.d/ec2-utils.conf
+%{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
 - Corrected issue where an ec2-metadata error was written to stdout
 - Change ec2nvme-nsid to use Bash string manipulation to improve
   performance and reliability
+- Rewrite ebsnvme-id in Bash so it is usable in early boot
+- Add Dracut module to support block device naming in early boot
 
 * Mon Jun  5 2023 Guillaume Delacour <delacoug@amazon.com> - 2.2.0-1
 - Add `--quiet` option to `ec2-metadata --help` output
