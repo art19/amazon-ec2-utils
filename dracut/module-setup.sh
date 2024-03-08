@@ -32,4 +32,13 @@ install() {
     ebsnvme-id \
     ec2nvme-nsid \
     ec2udev-vbd
+
+  # Install nvme-cli and its dependencies
+  inst_multiple \
+    /usr/sbin/nvme \
+    /lib64/libcrypto.* \
+    /lib64/libjson-c.* \
+    /lib64/libnvme.* \
+    /lib64/libnvme-mi.* \
+    /lib64/libz.*
 }
