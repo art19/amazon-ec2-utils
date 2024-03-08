@@ -95,6 +95,9 @@ device mapping names.
 %{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
+* Fri Mar 8 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
+- Copy nvme-cli in the Dracut module
+
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
 - Add Dracut module to support block device naming in early boot
