@@ -10,9 +10,9 @@ Source:    amazon-ec2-utils.tar.gz
 URL:       https://github.com/aws/amazon-ec2-utils
 BuildArch: noarch
 Provides:  ec2-utils = %{version}-%{release}
-Obsoletes: ec2-utils < 2.1
+Obsoletes: ec2-utils < 2.2
 Provides:  ec2-metadata = %{version}-%{release}
-Obsoletes: ec2-metadata <= 0.1
+Obsoletes: ec2-metadata <= 0.1.3
 Requires:  curl
 Requires:  nvme-cli >= 1.13
 BuildRequires: gzip systemd-rpm-macros
@@ -95,14 +95,14 @@ device mapping names.
 %{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
-* Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
+* Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Corrected issue where an ec2-metadata error was written to stdout
 - Change ec2nvme-nsid to use Bash string manipulation to improve
   performance and reliability
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
 - Add Dracut module to support block device naming in early boot
 
-* Mon Jun  5 2023 Guillaume Delacour <delacoug@amazon.com> - 2.2.0-1
+* Mon Jun 5 2023 Guillaume Delacour <delacoug@amazon.com> - 2.2.0-1
 - Add `--quiet` option to `ec2-metadata --help` output
 - Add `-R`/`--region` option to `ec2-metadata` to discover the EC2 instance's region
 
