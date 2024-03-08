@@ -2,7 +2,7 @@
 
 Name:      amazon-ec2-utils
 Summary:   A set of tools for running in EC2
-Version:   2.2.0
+Version:   2.3.0
 Release:   1%{?dist}
 License:   MIT
 Group:     System Tools
@@ -96,11 +96,13 @@ device mapping names.
 
 %changelog
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
+- Rewrite ebsnvme-id in Bash so it is usable in early boot
+- Add Dracut module to support block device naming in early boot
+
+* Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
 - Corrected issue where an ec2-metadata error was written to stdout
 - Change ec2nvme-nsid to use Bash string manipulation to improve
   performance and reliability
-- Rewrite ebsnvme-id in Bash so it is usable in early boot
-- Add Dracut module to support block device naming in early boot
 
 * Mon Jun 5 2023 Guillaume Delacour <delacoug@amazon.com> - 2.2.0-1
 - Add `--quiet` option to `ec2-metadata --help` output
