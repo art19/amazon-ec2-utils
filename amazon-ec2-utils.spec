@@ -2,7 +2,7 @@
 
 Name:      amazon-ec2-utils
 Summary:   A set of tools for running in EC2
-Version:   2.3.0
+Version:   2.3.1
 Release:   1%{?dist}
 License:   MIT
 Group:     System Tools
@@ -49,6 +49,7 @@ gzip -f -9 doc/*.8
 %{__install} -pm 644 doc/ec2-metadata.8.gz %{buildroot}%{_mandir}/man8/ec2-metadata.8.gz
 
 # udev rules
+%{__install} -pm 644 51-ec2-ena-ptp-device.rules %{buildroot}%{_udevrulesdir}/51-ec2-ena-ptp-device.rules
 %{__install} -pm 644 51-ec2-hvm-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-hvm-devices.rules
 %{__install} -pm 644 51-ec2-xen-vbd-devices.rules %{buildroot}%{_udevrulesdir}/51-ec2-xen-vbd-devices.rules
 %{__install} -pm 644 53-ec2-read-ahead-kb.rules %{buildroot}%{_udevrulesdir}/53-ec2-read-ahead-kb.rules
@@ -72,6 +73,7 @@ gzip -f -9 doc/*.8
 %{_sbindir}/ec2nvme-nsid
 %{_sbindir}/ebsnvme-id
 %{_sbindir}/ec2udev-vbd
+%{_udevrulesdir}/51-ec2-ena-ptp-device.rules
 %{_udevrulesdir}/51-ec2-hvm-devices.rules
 %{_udevrulesdir}/51-ec2-xen-vbd-devices.rules
 %{_udevrulesdir}/53-ec2-read-ahead-kb.rules
@@ -95,12 +97,18 @@ device mapping names.
 %{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
+* Mon Dec 16 2024 Keith Gable <gablk@amazon.com> - 2.3.1-1
+- Update from upstream (2.2.1)
+
 * Fri Mar 8 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Copy nvme-cli in the Dracut module
 
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
 - Add Dracut module to support block device naming in early boot
+
+* Wed May 29 2024 Kuniyuki Iwashima <kuniyu@amazon.com> - 2.2.1
+- Add symlink for ENA PTP device.
 
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
 - Corrected issue where an ec2-metadata error was written to stdout
