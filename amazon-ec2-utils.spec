@@ -107,6 +107,9 @@ device mapping names.
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
 - Add Dracut module to support block device naming in early boot
 
+* Tue Dec 17 2024 Keith Gable <gablk@amazon.com> - 2.2.1-1
+- Add support for --aws-domain to ec2-metadata
+
 * Wed May 29 2024 Kuniyuki Iwashima <kuniyu@amazon.com> - 2.2.1
 - Add symlink for ENA PTP device.
 
