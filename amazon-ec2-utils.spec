@@ -97,8 +97,14 @@ device mapping names.
 %{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
-* Mon Dec 16 2024 Keith Gable <gablk@amazon.com> - 2.3.1-1
+* Thu Dec 19 2024 Keith Gable <gablk@amazon.com> - 2.3.1-1
 - Update from upstream (2.2.1)
+
+* Tue Dec 17 2024 Keith Gable <gablk@amazon.com> - 2.2.1-1
+- Add support for --aws-domain to ec2-metadata
+
+* Wed May 29 2024 Kuniyuki Iwashima <kuniyu@amazon.com> - 2.2.1
+- Add symlink for ENA PTP device.
 
 * Fri Mar 8 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Copy nvme-cli in the Dracut module
@@ -106,12 +112,6 @@ device mapping names.
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.3.0-1
 - Rewrite ebsnvme-id in Bash so it is usable in early boot
 - Add Dracut module to support block device naming in early boot
-
-* Tue Dec 17 2024 Keith Gable <gablk@amazon.com> - 2.2.1-1
-- Add support for --aws-domain to ec2-metadata
-
-* Wed May 29 2024 Kuniyuki Iwashima <kuniyu@amazon.com> - 2.2.1
-- Add symlink for ENA PTP device.
 
 * Thu Jan 18 2024 Keith Gable <gablk@amazon.com> - 2.2.0-1
 - Corrected issue where an ec2-metadata error was written to stdout
