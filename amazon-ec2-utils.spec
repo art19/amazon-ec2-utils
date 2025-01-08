@@ -97,6 +97,9 @@ device mapping names.
 %{dracutlibdir}/modules.d/96ec2-utils/module-setup.sh
 
 %changelog
+* Wed Jan 17 2024 Christi Toa <toachris@amazon.com> - 2.3.2-1
+- Add support for --availability-zone-id to ec2-metadata
+
 * Thu Dec 19 2024 Keith Gable <gablk@amazon.com> - 2.3.1-1
 - Update from upstream (2.2.1)
 
